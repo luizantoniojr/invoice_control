@@ -5,18 +5,19 @@ class Invoice {
   double _value;
   List<DateTime> _paymentDates;
 
-  Invoice.fromJson(Map<String, dynamic> parsedJson) {
-    _id = parsedJson['id'];
-    _description = parsedJson['description'];
-    _dueDay = parsedJson['dueDay'];
-    _value = parsedJson['value'];
+  Invoice.fromJson(Map<String, dynamic> data) {
+    _id = data['id'];
+    _description = data['description'];
+    _dueDay = data['dueDay'];
+    _value = data['value'];
 
-    List<DateTime> paymentDates = [];
-    for (int i = 0; i < parsedJson['paymentDates'].length; i++) {
-      DateTime dateTime = DateTime(parsedJson['paymentDates'][i]);
-      paymentDates.add(dateTime);
-    }
-    _paymentDates = paymentDates;
+    //TODO: Corrigir erro ao criar DateTime.
+    // List<DateTime> paymentDates = [];
+    // for (int i = 0; i < data['paymentDates'].length; i++) {
+    //   DateTime dateTime = DateTime(data['paymentDates'][i]);
+    //   paymentDates.add(dateTime);
+    // }
+    // _paymentDates = paymentDates;
   }
 
   String get id => _id;

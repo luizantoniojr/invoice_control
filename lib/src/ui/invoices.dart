@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_control/src/blocs/invoices_bloc.dart';
+import 'package:invoice_control/src/models/invoice-result.dart';
 
 class Invoices extends StatefulWidget {
   final InvoiceBloc _invoiceBloc;
@@ -14,6 +15,7 @@ class _InvoicesState extends State<Invoices> {
   @override
   void initState() {
     widget._invoiceBloc.init();
+    widget._invoiceBloc.fetchAllInvoices();
     super.initState();
   }
 
@@ -34,7 +36,25 @@ class _InvoicesState extends State<Invoices> {
             TextField(
               decoration: InputDecoration(hintText: "Search"),
             ),
-            // Expanded(child: FutureBuilder())
+            Expanded(
+                child: StreamBuilder(
+              stream: widget._invoiceBloc.allInvoices,
+              builder: (context, AsyncSnapshot<InvoiceResult> snapshot) {
+                if (snapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: snapshot.data.total,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        title: Text(snapshot.data.results[index].description),
+                      );
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+                return Center(child: CircularProgressIndicator());
+              },
+            ))
           ],
         ),
       ),

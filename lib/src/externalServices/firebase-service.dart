@@ -5,7 +5,7 @@ class FirebaseService {
   @provide
   FirebaseService();
 
-  Future<DocumentSnapshot> fetchInvoices() async {
-    return Firestore.instance.collection('invoices').document().get();
+  Future<QuerySnapshot> fetchInvoices() async {
+    return Firestore.instance.collection('invoices').getDocuments();
   }
 }
