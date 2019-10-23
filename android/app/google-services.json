@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "356686570413",
+    "firebase_url": "https://invoice-control.firebaseio.com",
+    "project_id": "invoice-control",
+    "storage_bucket": "invoice-control.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:356686570413:android:ce2776b1fd9569cfd7f724",
+        "android_client_info": {
+          "package_name": "com.github.luizantoniojr.invoice_control"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "356686570413-d7up4g5fd1a1ii1f6t1gdrq1p5vums1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqrIYvN1fXj8GpEjzj9r6or6O91-F94ZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "356686570413-d7up4g5fd1a1ii1f6t1gdrq1p5vums1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
