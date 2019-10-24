@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 class Invoice {
   String _id;
   String _description;
@@ -23,4 +25,16 @@ class Invoice {
   int get dayDue => _dayDue;
   double get value => _value;
   List<DateTime> get paymentDates => _paymentDates;
+
+  String get valueFormated {
+    final currencyFormat = new NumberFormat("#,##0.00", "pt_BR");
+    var valueFormated = "R\$ ${currencyFormat.format(value)}";
+    return valueFormated;
+  }
+
+  bool get wasPayed {
+    var dateNow = DateTime.now();
+    return this.paymentDates.any(
+        (item) => item.year == dateNow.year && item.month == dateNow.month);
+  }
 }
