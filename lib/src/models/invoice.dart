@@ -9,7 +9,7 @@ class Invoice {
     _id = data['id'];
     _description = data['description'];
     _dayDue = data['dayDue'];
-    _value = data['value'];
+    _value = data['value'].toDouble();
 
     List<DateTime> paymentDates = [];
     for (int i = 0; i < data['paymentDates'].length; i++) {

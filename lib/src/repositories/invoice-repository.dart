@@ -10,7 +10,8 @@ class InvoiceRepository {
   InvoiceRepository(this.firebaseService);
 
   Future<InvoiceResult> fetchAllInvoices() {
-    return firebaseService.fetchInvoices().then((data) =>
+    var ordedField = "dayDue";
+    return firebaseService.fetchInvoices(ordedField).then((data) =>
         InvoiceResult.fromJson(
             data.documents.map((item) => item.data).toList()));
   }

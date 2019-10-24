@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_control/src/blocs/invoices_bloc.dart';
 import 'package:invoice_control/src/models/invoice-result.dart';
+import 'package:intl/intl.dart';
 
 class Invoices extends StatefulWidget {
   final InvoiceBloc _invoiceBloc;
@@ -60,9 +61,14 @@ class _InvoicesState extends State<Invoices> {
   }
 
   ListTile getInvoiceItem(AsyncSnapshot<InvoiceResult> snapshot, int index) {
+    final currencyFormat = new NumberFormat("#,##0.00", "pt_BR");
+
+    var valueFormated =
+        "R\$ ${currencyFormat.format(snapshot.data.results[index].value)}";
+
     return ListTile(
       title: Text(snapshot.data.results[index].description),
-      subtitle: Text(snapshot.data.results[index].value.toString()),
+      subtitle: Text(valueFormated),
       trailing: Text(snapshot.data.results[index].dayDue.toString()),
     );
   }

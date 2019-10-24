@@ -5,7 +5,10 @@ class FirebaseService {
   @provide
   FirebaseService();
 
-  Future<QuerySnapshot> fetchInvoices() async {
-    return Firestore.instance.collection('invoices').getDocuments();
+  Future<QuerySnapshot> fetchInvoices(String ordedField) async {
+    return Firestore.instance
+        .collection('invoices')
+        .orderBy(ordedField)
+        .getDocuments();
   }
 }
