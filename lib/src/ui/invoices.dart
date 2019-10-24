@@ -44,9 +44,7 @@ class _InvoicesState extends State<Invoices> {
                   return ListView.builder(
                     itemCount: snapshot.data.total,
                     itemBuilder: (BuildContext context, int index) {
-                      return ListTile(
-                        title: Text(snapshot.data.results[index].description),
-                      );
+                      return getInvoiceItem(snapshot, index);
                     },
                   );
                 } else if (snapshot.hasError) {
@@ -58,6 +56,14 @@ class _InvoicesState extends State<Invoices> {
           ],
         ),
       ),
+    );
+  }
+
+  ListTile getInvoiceItem(AsyncSnapshot<InvoiceResult> snapshot, int index) {
+    return ListTile(
+      title: Text(snapshot.data.results[index].description),
+      subtitle: Text(snapshot.data.results[index].value.toString()),
+      trailing: Text(snapshot.data.results[index].dayDue.toString()),
     );
   }
 }
