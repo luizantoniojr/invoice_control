@@ -42,4 +42,11 @@ class Invoice {
     return this.paymentDates.any((item) =>
         item.year == paymentDate.year && item.month == paymentDate.month);
   }
+
+  void removerPayment(DateTime paymentDate) {
+    _paymentDates = _paymentDates
+        .where((item) =>
+            item.month != paymentDate.month && item.year == paymentDate.year)
+        .toList();
+  }
 }

@@ -105,36 +105,87 @@ class _InvoicesState extends State<Invoices> {
         invoiceResult.results[index].dayDue.toString(),
         style: TextStyle(fontSize: 16),
       ),
-      onLongPress: () => _showInvoiceMenu(context),
+      onTap: () => _showInvoiceMenu(context, index, page),
       leading: _buildIcon(index, page),
     );
   }
 
-  void _showInvoiceMenu(context) {
+  void _showInvoiceMenu(BuildContext context, int index, int page) {
     showModalBottomSheet(
         context: context,
-        builder: (BuildContext bc) {
+        builder: (BuildContext buildContext) {
           return Container(
-            child: new Wrap(
+            padding: EdgeInsets.all(5.0),
+            child: Wrap(
               children: <Widget>[
-                new ListTile(
-                    leading: new Icon(Icons.check),
-                    title: new Text('Flag payment'),
-                    onTap: () => {}),
-                new ListTile(
-                  leading: new Icon(Icons.edit),
-                  title: new Text('Edit'),
-                  onTap: () => {},
-                ),
-                new ListTile(
-                  leading: new Icon(Icons.delete),
-                  title: new Text('Delete'),
-                  onTap: () => {},
-                ),
+                _buildInvoiceMenuTitle(index),
+                _buildInvoiceMenuItemFlagPayment(index, page, buildContext),
+                _buildInvoiceMenuItemEdit(),
+                _buildInvoiceMenuItemDelete(),
               ],
             ),
           );
         });
+  }
+
+  Container _buildInvoiceMenuTitle(int index) {
+    return Container(
+        child: Text(
+          invoiceResult.results[index].description,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        padding: EdgeInsets.all(20.0));
+  }
+
+  ListTile _buildInvoiceMenuItemFlagPayment(
+      int index, int page, BuildContext buildContext) {
+    return ListTile(
+        leading: _buildInvoiceMenuItemFlagPaymentIcon(index, page),
+        title: _buildInvoiceMenuItemFlagPaymentTitle(index, page),
+        onTap: () {
+          setPaymentDate(index, page);
+          Navigator.pop(buildContext);
+        });
+  }
+
+  ListTile _buildInvoiceMenuItemEdit() {
+    return ListTile(
+      leading: Icon(Icons.edit),
+      title: Text('Edit'),
+      onTap: () => {},
+    );
+  }
+
+  ListTile _buildInvoiceMenuItemDelete() {
+    return ListTile(
+      leading: Icon(Icons.delete),
+      title: Text('Delete'),
+      onTap: () => {},
+    );
+  }
+
+  Icon _buildInvoiceMenuItemFlagPaymentIcon(int index, int page) {
+    return invoiceResult.results[index]
+            .checkIfWasPayed(_getNewPaymentDate(page))
+        ? Icon(Icons.error)
+        : Icon(Icons.check);
+  }
+
+  Text _buildInvoiceMenuItemFlagPaymentTitle(int index, int page) {
+    return invoiceResult.results[index]
+            .checkIfWasPayed(_getNewPaymentDate(page))
+        ? Text("Flag no payment")
+        : Text("Flag payment");
+  }
+
+  void setPaymentDate(int index, int page) {
+    setState(() {
+      var paymentDate = _getNewPaymentDate(page);
+      if (!invoiceResult.results[index].checkIfWasPayed(paymentDate))
+        invoiceResult.results[index].paymentDates.add(paymentDate);
+      else
+        invoiceResult.results[index].removerPayment(paymentDate);
+    });
   }
 
   Icon _buildIcon(int index, int page) {
