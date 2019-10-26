@@ -13,11 +13,13 @@ class Invoices extends StatefulWidget {
 
 class _InvoicesState extends State<Invoices> {
   InvoiceResult invoiceResult;
+  Text title;
 
   @override
   void initState() {
     widget._invoiceBloc.init();
     widget._invoiceBloc.fetchAllInvoices();
+    updateTitle(0);
     super.initState();
   }
 
@@ -31,7 +33,10 @@ class _InvoicesState extends State<Invoices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Invoice Control")),
+      appBar: AppBar(
+        title: title,
+        leading: Icon(Icons.event),
+      ),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
@@ -41,6 +46,7 @@ class _InvoicesState extends State<Invoices> {
             ),
             Expanded(
                 child: PageView.builder(
+              onPageChanged: (int page) => updateTitle(page),
               reverse: true,
               scrollDirection: Axis.horizontal,
               itemBuilder: (BuildContext context, int page) {
@@ -74,9 +80,6 @@ class _InvoicesState extends State<Invoices> {
   }
 
   ListTile buildInvoiceItem(int index, int page) {
-    var dateNow = DateTime.now();
-    var paymentDate = DateTime(dateNow.year, dateNow.month - page, dateNow.day);
-
     return ListTile(
       title: Text(invoiceResult.results[index].description),
       subtitle: Text(invoiceResult.results[index].valueFormated),
@@ -85,9 +88,22 @@ class _InvoicesState extends State<Invoices> {
         style: TextStyle(fontSize: 16),
       ),
       onLongPress: () {},
-      leading: Checkbox(
-        value: invoiceResult.results[index].checkIfWasPayed(paymentDate),
-      ),
+      leading: Icon(
+          invoiceResult.results[index].checkIfWasPayed(getNewPaymentDate(page))
+              ? Icons.check
+              : Icons.error),
     );
+  }
+
+  void updateTitle(int page) {
+    setState(() {
+      var paymentDate = getNewPaymentDate(page);
+      title = Text("Payments of ${paymentDate.month}/${paymentDate.year}");
+    });
+  }
+
+  DateTime getNewPaymentDate(int page) {
+    var dateNow = DateTime.now();
+    return DateTime(dateNow.year, dateNow.month - page, dateNow.day);
   }
 }
