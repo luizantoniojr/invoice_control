@@ -14,7 +14,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Invoice Control',
       theme: ThemeData(
-        appBarTheme: AppBarTheme(color: Colors.white70),
+        appBarTheme: AppBarTheme(color: Colors.amber),
         primarySwatch: Colors.amber,
       ),
       initialRoute: '/',
