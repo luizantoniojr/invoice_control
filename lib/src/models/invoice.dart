@@ -37,4 +37,9 @@ class Invoice {
     return this.paymentDates.any(
         (item) => item.year == dateNow.year && item.month == dateNow.month);
   }
+
+  bool checkIfWasPayed(DateTime paymentDate) {
+    return this.paymentDates.any((item) =>
+        item.year == paymentDate.year && item.month == paymentDate.month);
+  }
 }

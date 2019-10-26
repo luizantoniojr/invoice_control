@@ -12,6 +12,8 @@ class Invoices extends StatefulWidget {
 }
 
 class _InvoicesState extends State<Invoices> {
+  InvoiceResult invoiceResult;
+
   @override
   void initState() {
     widget._invoiceBloc.init();
@@ -22,6 +24,7 @@ class _InvoicesState extends State<Invoices> {
   @override
   void dispose() {
     widget._invoiceBloc.dispose();
+    invoiceResult = null;
     super.dispose();
   }
 
@@ -37,20 +40,11 @@ class _InvoicesState extends State<Invoices> {
               decoration: InputDecoration(hintText: "Search"),
             ),
             Expanded(
-                child: StreamBuilder(
-              stream: widget._invoiceBloc.allInvoices,
-              builder: (context, AsyncSnapshot<InvoiceResult> snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                    itemCount: snapshot.data.total,
-                    itemBuilder: (BuildContext context, int index) {
-                      return getInvoiceItem(snapshot, index);
-                    },
-                  );
-                } else if (snapshot.hasError) {
-                  return Text(snapshot.error.toString());
-                }
-                return Center(child: CircularProgressIndicator());
+                child: PageView.builder(
+              reverse: true,
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (BuildContext context, int page) {
+                return buildStreamBuilder(page);
               },
             ))
           ],
@@ -59,17 +53,40 @@ class _InvoicesState extends State<Invoices> {
     );
   }
 
-  ListTile getInvoiceItem(AsyncSnapshot<InvoiceResult> snapshot, int index) {
+  StreamBuilder<InvoiceResult> buildStreamBuilder(int page) {
+    return StreamBuilder(
+      stream: widget._invoiceBloc.allInvoices,
+      builder: (context, AsyncSnapshot<InvoiceResult> snapshot) {
+        if (snapshot.hasData || invoiceResult != null) {
+          if (snapshot.data != null) invoiceResult = snapshot.data;
+          return ListView.builder(
+            itemCount: invoiceResult.total,
+            itemBuilder: (BuildContext context, int index) {
+              return buildInvoiceItem(index, page);
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text(snapshot.error.toString());
+        }
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  ListTile buildInvoiceItem(int index, int page) {
+    var dateNow = DateTime.now();
+    var paymentDate = DateTime(dateNow.year, dateNow.month - page, dateNow.day);
+
     return ListTile(
-      title: Text(snapshot.data.results[index].description),
-      subtitle: Text(snapshot.data.results[index].valueFormated),
+      title: Text(invoiceResult.results[index].description),
+      subtitle: Text(invoiceResult.results[index].valueFormated),
       trailing: Text(
-        snapshot.data.results[index].dayDue.toString(),
+        invoiceResult.results[index].dayDue.toString(),
         style: TextStyle(fontSize: 16),
       ),
       onLongPress: () {},
       leading: Checkbox(
-        value: snapshot.data.results[index].wasPayed,
+        value: invoiceResult.results[index].checkIfWasPayed(paymentDate),
       ),
     );
   }

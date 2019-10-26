@@ -21,6 +21,7 @@ class InvoiceBloc extends BlocBase {
   fetchAllInvoices() async {
     InvoiceResult invoiceResult = await _repository.fetchAllInvoices();
     _invoicesFetcher.sink.add(invoiceResult);
+    return invoiceResult;
   }
 
   @override
