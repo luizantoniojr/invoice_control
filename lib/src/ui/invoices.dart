@@ -18,7 +18,7 @@ class _InvoicesState extends State<Invoices> {
   @override
   void initState() {
     widget._invoiceBloc.init();
-    widget._invoiceBloc.fetchAllInvoices();
+    widget._invoiceBloc.fetchAll();
     _updateTitle(0);
     super.initState();
   }
@@ -181,10 +181,8 @@ class _InvoicesState extends State<Invoices> {
   void setPaymentDate(int index, int page) {
     setState(() {
       var paymentDate = _getNewPaymentDate(page);
-      if (!invoiceResult.results[index].checkIfWasPayed(paymentDate))
-        invoiceResult.results[index].paymentDates.add(paymentDate);
-      else
-        invoiceResult.results[index].removerPayment(paymentDate);
+      var invoice = invoiceResult.results[index];
+      widget._invoiceBloc.updatePaymentDate(invoice, paymentDate);
     });
   }
 

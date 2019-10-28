@@ -5,10 +5,23 @@ class FirebaseService {
   @provide
   FirebaseService();
 
-  Future<QuerySnapshot> fetchInvoices(String ordedField) async {
+  Future<QuerySnapshot> fetch(String document, String ordedField) async {
     return Firestore.instance
-        .collection('invoices')
+        .collection(document)
         .orderBy(ordedField)
         .getDocuments();
+  }
+
+  void update(String document, String documentId, Map<String, dynamic> data) {
+    final DocumentReference reference =
+        Firestore.instance.document('$document/$documentId');
+
+    Firestore.instance.runTransaction((Transaction transaction) async {
+      DocumentSnapshot snapshot = await transaction.get(reference);
+      if (snapshot.exists) {
+        data.forEach((key, value) =>
+            transaction.update(reference, <String, dynamic>{key: value}));
+      }
+    });
   }
 }
