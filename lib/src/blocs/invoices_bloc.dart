@@ -34,6 +34,7 @@ class InvoiceBloc extends BlocBase {
       invoice.paymentDates.add(paymentDate);
     else
       invoice.removerPayment(paymentDate);
+    this.update(invoice);
   }
 
   @override
