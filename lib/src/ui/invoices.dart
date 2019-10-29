@@ -54,7 +54,7 @@ class _InvoicesState extends State<Invoices> {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: Column(
-        children: <Widget>[_buildSeachTextField(), _buildList()],
+        children: <Widget>[_buildList()],
       ),
     );
   }
