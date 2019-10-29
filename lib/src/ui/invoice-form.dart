@@ -22,6 +22,15 @@ class _InvoiceFormState extends State<InvoiceForm> {
       MoneyMaskedTextController(decimalSeparator: ',', thousandSeparator: '.');
   final _dueDay = new TextEditingController();
 
+
+  @override
+  void initState() {
+    _description.text = "";
+    _value.text = "";
+    _dueDay.text = "";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: buildAppBar(), body: buildBody());
