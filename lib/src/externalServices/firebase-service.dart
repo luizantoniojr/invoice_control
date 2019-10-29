@@ -28,4 +28,8 @@ class FirebaseService {
       }
     });
   }
+
+  void delete(String document, String documentId) {
+    Firestore.instance.collection(document).document(documentId).delete();
+  }
 }
