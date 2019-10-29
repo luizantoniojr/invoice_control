@@ -35,6 +35,11 @@ class _InvoicesState extends State<Invoices> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => Navigator.pushNamed(context, '/NewInvoice'),
+        tooltip: 'New invoice',
+        child: Icon(Icons.add),
+      ),
     );
   }
 
@@ -102,7 +107,7 @@ class _InvoicesState extends State<Invoices> {
       title: Text(invoiceResult.results[index].description),
       subtitle: Text(invoiceResult.results[index].valueFormated),
       trailing: Text(
-        invoiceResult.results[index].dayDue.toString(),
+        invoiceResult.results[index].dueDay.toString(),
         style: TextStyle(fontSize: 16),
       ),
       onTap: () => _showInvoiceMenu(context, index, page),

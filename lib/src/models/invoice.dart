@@ -1,35 +1,45 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:invoice_control/src/formatters/currency-formatter.dart';
 
 class Invoice {
   String _id;
   String _description;
-  int _dayDue;
+  int _dueDay;
   double _value;
   List<DateTime> _paymentDates;
 
   String get id => _id;
   String get description => _description;
-  int get dayDue => _dayDue;
+  int get dueDay => _dueDay;
   double get value => _value;
   List<DateTime> get paymentDates => _paymentDates;
+
+  Invoice(String description, double value, int dueDay) {
+    this._description = description;
+    this._value = value;
+    this._dueDay = dueDay;
+  }
 
   Invoice.fromJson(DocumentSnapshot item) {
     _id = item.documentID;
     _description = item.data['description'];
-    _dayDue = item.data['dayDue'];
+    _dueDay = item.data['dueDay'];
     _value = item.data['value'].toDouble();
+    _paymentDates = [];
 
-    List<DateTime> paymentDates = [];
-    for (int i = 0; i < item.data['paymentDates'].length; i++) {
-      paymentDates.add(item.data['paymentDates'][i].toDate());
+    if (item.data['paymentDates'] != null) {
+      List<DateTime> paymentDates = [];
+      for (int i = 0; i < item.data['paymentDates'].length; i++) {
+        paymentDates.add(item.data['paymentDates'][i].toDate());
+      }
+      _paymentDates = paymentDates;
     }
-    _paymentDates = paymentDates;
   }
 
   toMap() {
     var map = new Map<String, dynamic>();
-    map['dayDue'] = this.dayDue;
+    map['dueDay'] = this.dueDay;
     map['description'] = this.description;
     map['paymentDates'] = this.paymentDates;
     map['value'] = this.value;
@@ -38,8 +48,7 @@ class Invoice {
   }
 
   String get valueFormated {
-    final currencyFormat = new NumberFormat("#,##0.00", "pt_BR");
-    var valueFormated = "R\$ ${currencyFormat.format(value)}";
+    var valueFormated = "R\$ ${CurrencyFormatter().formatToCurrency(value)}";
     return valueFormated;
   }
 

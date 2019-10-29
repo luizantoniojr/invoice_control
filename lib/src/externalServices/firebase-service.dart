@@ -12,6 +12,10 @@ class FirebaseService {
         .getDocuments();
   }
 
+  void insert(String document, Map<String, dynamic> data) {
+    Firestore.instance.collection(document).document().setData(data);
+  }
+
   void update(String document, String documentId, Map<String, dynamic> data) {
     final DocumentReference reference =
         Firestore.instance.document('$document/$documentId');

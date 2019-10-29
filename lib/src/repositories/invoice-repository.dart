@@ -12,7 +12,7 @@ class InvoiceRepository {
   InvoiceRepository(this.firebaseService);
 
   Future<InvoiceResult> fetchAll() {
-    var ordedField = "dayDue";
+    var ordedField = "dueDay";
 
     return firebaseService
         .fetch(document, ordedField)
@@ -22,5 +22,10 @@ class InvoiceRepository {
   void update(Invoice invoice) {
     var map = invoice.toMap();
     return firebaseService.update(document, invoice.id, map);
+  }
+
+  void insert(Invoice invoice) {
+    var map = invoice.toMap();
+    return firebaseService.insert(document, map);
   }
 }

@@ -29,6 +29,10 @@ class InvoiceBloc extends BlocBase {
     _repository.update(invoice);
   }
 
+  insert(Invoice invoice) {
+    _repository.insert(invoice);
+  }
+
   updatePaymentDate(Invoice invoice, DateTime paymentDate) {
     if (!invoice.checkIfWasPayed(paymentDate))
       invoice.paymentDates.add(paymentDate);

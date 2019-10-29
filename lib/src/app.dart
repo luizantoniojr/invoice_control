@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:inject/inject.dart';
 import 'package:invoice_control/src/blocs/invoices_bloc.dart';
+import 'package:invoice_control/src/ui/invoice-form.dart';
 import 'package:invoice_control/src/ui/invoices.dart';
 
 class App extends StatelessWidget {
@@ -18,7 +19,14 @@ class App extends StatelessWidget {
         primarySwatch: Colors.amber,
       ),
       initialRoute: '/',
-      routes: {'/': (context) => Invoices(invoiceBloc)},
+      routes: getRoutes(),
     );
+  }
+
+  Map<String, WidgetBuilder> getRoutes() {
+    return {
+      '/': (context) => Invoices(invoiceBloc),
+      '/NewInvoice': (context) => InvoiceForm(invoiceBloc)
+    };
   }
 }
