@@ -35,8 +35,9 @@ class _InvoiceFormState extends State<InvoiceForm> {
     _invoice = ModalRoute.of(context).settings.arguments;
     setState(() {
       if (_invoice != null) {
-        setValueInController(_description, _invoice.description.toString());
-        setValueInController(_value, _invoice.value.toString());
+        setValueInController(_description, _invoice.description);
+        setValueInController(
+            _value, CurrencyFormatter().formatToCurrency(_invoice.value));
         setValueInController(_dueDay, _invoice.dueDay.toString());
       }
     });

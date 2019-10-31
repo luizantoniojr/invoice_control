@@ -212,6 +212,7 @@ class _InvoicesState extends State<Invoices> {
 
   DateTime _getNewPaymentDate(int page) {
     var dateNow = DateTime.now();
-    return DateTime(dateNow.year, dateNow.month - page, dateNow.day);
+    var day = page == 0 ? dateNow.day : 1;
+    return DateTime(dateNow.year, dateNow.month - page, day);
   }
 }
