@@ -21,19 +21,34 @@ class _InvoiceFormState extends State<InvoiceForm> {
   final _value =
       MoneyMaskedTextController(decimalSeparator: ',', thousandSeparator: '.');
   final _dueDay = new TextEditingController();
-
+  Invoice _invoice;
 
   @override
   void initState() {
-    _description.text = "";
-    _value.text = "";
-    _dueDay.text = "";
+    _description.clear();
+    _dueDay.clear();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    _invoice = ModalRoute.of(context).settings.arguments;
+    setState(() {
+      if (_invoice != null) {
+        setValueInController(_description, _invoice.description.toString());
+        setValueInController(_value, _invoice.value.toString());
+        setValueInController(_dueDay, _invoice.dueDay.toString());
+      }
+    });
+
     return Scaffold(appBar: buildAppBar(), body: buildBody());
+  }
+
+  void setValueInController(TextEditingController controller, String value) {
+    controller.value = TextEditingValue(
+      text: value,
+      selection: TextSelection.fromPosition(TextPosition(offset: value.length)),
+    );
   }
 
   AppBar buildAppBar() {
@@ -44,16 +59,27 @@ class _InvoiceFormState extends State<InvoiceForm> {
           icon: Icon(Icons.check),
           onPressed: () {
             if (_formKey.currentState.validate()) {
-              widget._invoiceBloc.insert(Invoice(
-                  _description.text,
-                  CurrencyFormatter().formatToNumber(_value.text),
-                  int.parse(_dueDay.text)));
+              saveInvoice();
               Navigator.pushNamed(context, '/');
             }
           },
         )
       ],
     );
+  }
+
+  void saveInvoice() {
+    if (_invoice == null) {
+      widget._invoiceBloc.insert(Invoice(
+          _description.text,
+          CurrencyFormatter().formatToNumber(_value.text),
+          int.parse(_dueDay.text)));
+    } else {
+      _invoice.description = _description.text;
+      _invoice.value = CurrencyFormatter().formatToNumber(_value.text);
+      _invoice.dueDay = int.parse(_dueDay.text);
+      widget._invoiceBloc.update(_invoice);
+    }
   }
 
   Container buildBody() {

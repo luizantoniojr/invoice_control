@@ -17,16 +17,21 @@ class FirebaseService {
   }
 
   void update(String document, String documentId, Map<String, dynamic> data) {
-    final DocumentReference reference =
-        Firestore.instance.document('$document/$documentId');
+    Firestore.instance
+        .collection(document)
+        .document(documentId)
+        .updateData(data);
 
-    Firestore.instance.runTransaction((Transaction transaction) async {
-      DocumentSnapshot snapshot = await transaction.get(reference);
-      if (snapshot.exists) {
-        data.forEach((key, value) =>
-            transaction.update(reference, <String, dynamic>{key: value}));
-      }
-    });
+    // final DocumentReference reference =
+    //     Firestore.instance.document('$document/$documentId');
+
+    // Firestore.instance.runTransaction((Transaction transaction) async {
+    //   DocumentSnapshot snapshot = await transaction.get(reference);
+    //   if (snapshot.exists) {
+    //     data.forEach((key, value) =>
+    //         transaction.update(reference, <String, dynamic>{key: value}));
+    //   }
+    // });
   }
 
   void delete(String document, String documentId) {

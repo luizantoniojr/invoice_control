@@ -125,7 +125,7 @@ class _InvoicesState extends State<Invoices> {
               children: <Widget>[
                 _buildInvoiceMenuTitle(index),
                 _buildInvoiceMenuItemFlagPayment(index, page, buildContext),
-                _buildInvoiceMenuItemEdit(),
+                _buildInvoiceMenuItemEdit(index),
                 _buildInvoiceMenuItemDelete(index, buildContext),
               ],
             ),
@@ -153,11 +153,13 @@ class _InvoicesState extends State<Invoices> {
         });
   }
 
-  ListTile _buildInvoiceMenuItemEdit() {
+  ListTile _buildInvoiceMenuItemEdit(int index) {
     return ListTile(
       leading: Icon(Icons.edit),
       title: Text('Edit'),
-      onTap: () => {},
+      onTap: () {
+        Navigator.pushNamed(context, '/NewInvoice', arguments: invoices[index]);
+      },
     );
   }
 

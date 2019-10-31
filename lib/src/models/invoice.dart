@@ -8,16 +8,32 @@ class Invoice {
   double _value;
   List<DateTime> _paymentDates;
 
+  Invoice(String description, double value, int dueDay) {
+    this._description = description;
+    this._value = value;
+    this._dueDay = dueDay;
+  }
+
   String get id => _id;
   String get description => _description;
   int get dueDay => _dueDay;
   double get value => _value;
   List<DateTime> get paymentDates => _paymentDates;
 
-  Invoice(String description, double value, int dueDay) {
+  set id(String id) {
+    this._id = id;
+  }
+
+  set description(String description) {
     this._description = description;
-    this._value = value;
+  }
+
+  set dueDay(int dueDay) {
     this._dueDay = dueDay;
+  }
+
+  set value(double value) {
+    this._value = value;
   }
 
   Invoice.fromJson(DocumentSnapshot item) {
