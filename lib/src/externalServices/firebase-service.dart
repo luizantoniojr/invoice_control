@@ -21,17 +21,6 @@ class FirebaseService {
         .collection(document)
         .document(documentId)
         .updateData(data);
-
-    // final DocumentReference reference =
-    //     Firestore.instance.document('$document/$documentId');
-
-    // Firestore.instance.runTransaction((Transaction transaction) async {
-    //   DocumentSnapshot snapshot = await transaction.get(reference);
-    //   if (snapshot.exists) {
-    //     data.forEach((key, value) =>
-    //         transaction.update(reference, <String, dynamic>{key: value}));
-    //   }
-    // });
   }
 
   void delete(String document, String documentId) {
