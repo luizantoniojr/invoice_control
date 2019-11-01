@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:invoice_control/src/blocs/invoices_bloc.dart';
 import 'package:invoice_control/src/models/invoice.dart';
 
+import 'widgets/new-invoice-button.dart';
+
 class Invoices extends StatefulWidget {
   final InvoiceBloc _invoiceBloc;
 
@@ -35,11 +37,7 @@ class _InvoicesState extends State<Invoices> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: _buildBody(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.pushNamed(context, '/NewInvoice'),
-        tooltip: 'New invoice',
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: NewInvoiceButton(),
     );
   }
 
@@ -216,3 +214,4 @@ class _InvoicesState extends State<Invoices> {
     return DateTime(dateNow.year, dateNow.month - page, day);
   }
 }
+''
