@@ -214,4 +214,3 @@ class _InvoicesState extends State<Invoices> {
     return DateTime(dateNow.year, dateNow.month - page, day);
   }
 }
-''
