@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:invoice_control/src/blocs/invoices_bloc.dart';
 import 'package:invoice_control/src/models/invoice.dart';
+import 'package:invoice_control/src/ui/widgets/invoice-list-tile.dart';
+import 'package:invoice_control/src/ui/widgets/menu-bottom-sheet.dart';
 
 import 'widgets/new-invoice-button.dart';
 
 class Invoices extends StatefulWidget {
-  final InvoiceBloc _invoiceBloc;
+  final InvoiceBloc invoiceBloc;
 
-  Invoices(this._invoiceBloc);
+  Invoices(this.invoiceBloc);
 
   @override
   _InvoicesState createState() => _InvoicesState();
@@ -19,15 +21,15 @@ class _InvoicesState extends State<Invoices> {
 
   @override
   void initState() {
-    widget._invoiceBloc.init();
-    widget._invoiceBloc.fetchAll();
+    widget.invoiceBloc.init();
+    widget.invoiceBloc.fetchAll();
     _updateTitle(0);
     super.initState();
   }
 
   @override
   void dispose() {
-    widget._invoiceBloc.dispose();
+    widget.invoiceBloc.dispose();
     invoices = null;
     super.dispose();
   }
@@ -35,16 +37,9 @@ class _InvoicesState extends State<Invoices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      appBar: AppBar(title: title),
       body: _buildBody(),
       floatingActionButton: NewInvoiceButton(),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      title: title,
-      leading: Icon(Icons.event),
     );
   }
 
@@ -54,12 +49,6 @@ class _InvoicesState extends State<Invoices> {
       child: Column(
         children: <Widget>[_buildList()],
       ),
-    );
-  }
-
-  TextField _buildSeachTextField() {
-    return TextField(
-      decoration: InputDecoration(hintText: "Search"),
     );
   }
 
@@ -77,7 +66,7 @@ class _InvoicesState extends State<Invoices> {
 
   StreamBuilder<List<Invoice>> _buildStreamBuilder(int page) {
     return StreamBuilder(
-      stream: widget._invoiceBloc.allInvoices,
+      stream: widget.invoiceBloc.allInvoices,
       builder: (context, AsyncSnapshot<List<Invoice>> snapshot) {
         bool canBuildListView = snapshot.hasData || invoices != null;
         if (canBuildListView) {
@@ -95,21 +84,15 @@ class _InvoicesState extends State<Invoices> {
     return ListView.builder(
       itemCount: invoices.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildInvoiceItem(context, index, page);
+        return InvoiceListTile(
+          invoices: invoices,
+          context: context,
+          index: index,
+          page: page,
+          onTap: _showInvoiceMenu,
+          parent: widget,
+        );
       },
-    );
-  }
-
-  ListTile _buildInvoiceItem(BuildContext context, int index, int page) {
-    return ListTile(
-      title: Text(invoices[index].description),
-      subtitle: Text(invoices[index].valueFormated),
-      trailing: Text(
-        invoices[index].dueDay.toString(),
-        style: TextStyle(fontSize: 16),
-      ),
-      onTap: () => _showInvoiceMenu(context, index, page),
-      leading: _buildIcon(index, page),
     );
   }
 
@@ -117,100 +100,43 @@ class _InvoicesState extends State<Invoices> {
     showModalBottomSheet(
         context: context,
         builder: (BuildContext buildContext) {
-          return Container(
-            padding: EdgeInsets.all(5.0),
-            child: Wrap(
-              children: <Widget>[
-                _buildInvoiceMenuTitle(index),
-                _buildInvoiceMenuItemFlagPayment(index, page, buildContext),
-                _buildInvoiceMenuItemEdit(index),
-                _buildInvoiceMenuItemDelete(index, buildContext),
-              ],
-            ),
+          return MenuBottomSheet(
+            invoices: invoices,
+            widget: widget,
+            buildContext: buildContext,
+            index: index,
+            page: page,
+            onTapFlagPayment: () {
+              setPaymentDate(index, page);
+              Navigator.pop(buildContext);
+            },
+            onTapEdit: () {
+              Navigator.pushNamed(context, '/NewInvoice',
+                  arguments: invoices[index]);
+            },
+            onTapDelete: () {
+              widget.invoiceBloc.delete(invoices[index].id);
+              setState(() {
+                invoices.removeAt(index);
+              });
+              Navigator.pop(buildContext);
+            },
           );
         });
   }
 
-  Container _buildInvoiceMenuTitle(int index) {
-    return Container(
-        child: Text(
-          invoices[index].description,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        padding: EdgeInsets.all(20.0));
-  }
-
-  ListTile _buildInvoiceMenuItemFlagPayment(
-      int index, int page, BuildContext buildContext) {
-    return ListTile(
-        leading: _buildInvoiceMenuItemFlagPaymentIcon(index, page),
-        title: _buildInvoiceMenuItemFlagPaymentTitle(index, page),
-        onTap: () {
-          setPaymentDate(index, page);
-          Navigator.pop(buildContext);
-        });
-  }
-
-  ListTile _buildInvoiceMenuItemEdit(int index) {
-    return ListTile(
-      leading: Icon(Icons.edit),
-      title: Text('Edit'),
-      onTap: () {
-        Navigator.pushNamed(context, '/NewInvoice', arguments: invoices[index]);
-      },
-    );
-  }
-
-  ListTile _buildInvoiceMenuItemDelete(int index, BuildContext buildContext) {
-    return ListTile(
-      leading: Icon(Icons.delete),
-      title: Text('Delete'),
-      onTap: () {
-        widget._invoiceBloc.delete(invoices[index].id);
-        setState(() {
-          invoices.removeAt(index);
-        });
-        Navigator.pop(buildContext);
-      },
-    );
-  }
-
-  Icon _buildInvoiceMenuItemFlagPaymentIcon(int index, int page) {
-    return invoices[index].checkIfWasPayed(_getNewPaymentDate(page))
-        ? Icon(Icons.error)
-        : Icon(Icons.check);
-  }
-
-  Text _buildInvoiceMenuItemFlagPaymentTitle(int index, int page) {
-    return invoices[index].checkIfWasPayed(_getNewPaymentDate(page))
-        ? Text("Flag no payment")
-        : Text("Flag payment");
-  }
-
   void setPaymentDate(int index, int page) {
     setState(() {
-      var paymentDate = _getNewPaymentDate(page);
+      var paymentDate = widget.invoiceBloc.getNewPaymentDate(page);
       var invoice = invoices[index];
-      widget._invoiceBloc.updatePaymentDate(invoice, paymentDate);
+      widget.invoiceBloc.updatePaymentDate(invoice, paymentDate);
     });
-  }
-
-  Icon _buildIcon(int index, int page) {
-    return Icon(invoices[index].checkIfWasPayed(_getNewPaymentDate(page))
-        ? Icons.check
-        : Icons.error);
   }
 
   void _updateTitle(int page) {
     setState(() {
-      var paymentDate = _getNewPaymentDate(page);
+      var paymentDate = widget.invoiceBloc.getNewPaymentDate(page);
       title = Text("Payments of ${paymentDate.month}/${paymentDate.year}");
     });
-  }
-
-  DateTime _getNewPaymentDate(int page) {
-    var dateNow = DateTime.now();
-    var day = page == 0 ? dateNow.day : 1;
-    return DateTime(dateNow.year, dateNow.month - page, day);
   }
 }

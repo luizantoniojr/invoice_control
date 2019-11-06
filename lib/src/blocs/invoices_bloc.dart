@@ -44,6 +44,12 @@ class InvoiceBloc extends BlocBase {
     this.update(invoice);
   }
 
+  DateTime getNewPaymentDate(int page) {
+    var dateNow = DateTime.now();
+    var day = page == 0 ? dateNow.day : 1;
+    return DateTime(dateNow.year, dateNow.month - page, day);
+  }
+
   @override
   void dispose() {
     _invoicesFetcher.close();
