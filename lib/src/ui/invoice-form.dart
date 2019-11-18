@@ -69,7 +69,7 @@ class _InvoiceFormState extends State<InvoiceForm> {
           onPressed: () {
             if (_formKey.currentState.validate()) {
               saveInvoice();
-              Navigator.pushNamed(context, '/');
+              Navigator.pop(context);
             }
           },
         )

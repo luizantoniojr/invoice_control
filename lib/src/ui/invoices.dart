@@ -28,6 +28,12 @@ class _InvoicesState extends State<Invoices> {
   }
 
   @override
+  void didUpdateWidget(Invoices oldWidget) {
+    widget.invoiceBloc.fetchAll();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     widget.invoiceBloc.dispose();
     invoices = null;
