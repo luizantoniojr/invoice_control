@@ -31,18 +31,21 @@ class _InvoiceFormState extends State<InvoiceForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
+    fillForm();
+    super.didChangeDependencies();
+  }
+
+  void fillForm() {
     _invoice = ModalRoute.of(context).settings.arguments;
     setState(() {
       if (_invoice != null) {
         setValueInController(_description, _invoice.description);
-        setValueInController(
-            _value, CurrencyFormatter().formatToCurrency(_invoice.value));
+        var value = CurrencyFormatter().formatToCurrency(_invoice.value);
+        setValueInController(_value, value);
         setValueInController(_dueDay, _invoice.dueDay.toString());
       }
     });
-
-    return Scaffold(appBar: buildAppBar(), body: buildBody());
   }
 
   void setValueInController(TextEditingController controller, String value) {
@@ -50,6 +53,11 @@ class _InvoiceFormState extends State<InvoiceForm> {
       text: value,
       selection: TextSelection.fromPosition(TextPosition(offset: value.length)),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(appBar: buildAppBar(), body: buildBody());
   }
 
   AppBar buildAppBar() {
