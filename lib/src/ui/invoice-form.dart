@@ -24,10 +24,10 @@ class _InvoiceFormState extends State<InvoiceForm> {
   Invoice _invoice;
 
   @override
-  void initState() {
+  void dispose() {
     _description.clear();
     _dueDay.clear();
-    super.initState();
+    super.dispose();
   }
 
   @override
