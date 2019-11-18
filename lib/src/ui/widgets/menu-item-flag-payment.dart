@@ -25,10 +25,7 @@ class MenuItemFlagPayment extends StatelessWidget {
     return ListTile(
         leading: _buildInvoiceMenuItemFlagPaymentIcon(index, page),
         title: _buildInvoiceMenuItemFlagPaymentTitle(index, page),
-        onTap: () {
-          onTap(index, page);
-          Navigator.pop(buildContext);
-        });
+        onTap: onTap);
   }
 
   Icon _buildInvoiceMenuItemFlagPaymentIcon(int index, int page) {
